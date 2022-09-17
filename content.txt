@@ -1,0 +1,26 @@
+Understanding Design Patterns 
+Getting Used to Xcode
+Creating the SportsStore App 
+The Object Template Pattern 
+The Prototype Pattern 
+The Singleton Pattern
+The Object Pool Pattern
+Object Pool Variations
+The Factory Method Pattern
+Abstract Factory Pattern
+The Builder Pattern 
+The Adapter Pattern 
+The Bridge Pattern 
+The Decorator Pattern
+The Composite Pattern
+The Façade Pattern 
+The Flyweight Pattern 
+The Proxy Pattern
+The Chain of Responsibility Pattern
+The Command Pattern
+The Mediator Pattern 
+The Observer Pattern 
+The Memento Pattern
+The Strategy Pattern 
+The Visitor Pattern 
+The Template Method Pattern 
