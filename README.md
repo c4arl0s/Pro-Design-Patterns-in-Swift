@@ -6,6 +6,8 @@
 2. [ ] [2. Getting Used to Xcode](https://github.com/c4arl0s/design-patterns-in-swift#2-Getting-Used-to-Xcode)
 3. [ ] [3. Creating the SportsStore App](https://github.com/c4arl0s/design-patterns-in-swift#3-Creating-the-SportsStore-App)
 
+<img width="517" alt="Screen Shot 2022-09-16 at 11 47 09 p m" src="https://user-images.githubusercontent.com/24994818/190840920-2d050b30-b6b4-4948-a20f-55e67625c2b4.png">
+
 # The Creation Patterns
 
 4. [ ] [4. The Object Template Pattern](https://github.com/c4arl0s/design-patterns-in-swift#4-The-Object-Template-Pattern)
