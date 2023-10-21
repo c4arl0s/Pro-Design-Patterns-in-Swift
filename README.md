@@ -2,9 +2,9 @@
 
 # [Pro-Design-Patterns-in-Swift - Content](https://github.com/c4arl0s/pro-design-patterns-in-swift#go-back-to-overview)
 
-1. [ ] [1. Understanding Design Patterns](https://github.com/c4arl0s/pro-design-patterns-in-swift#1-Understanding-Design-Patterns)
-2. [ ] [2. Getting Used to Xcode](https://github.com/c4arl0s/pro-design-patterns-in-swift#2-Getting-Used-to-Xcode)
-3. [ ] [3. Creating the SportsStore App](https://github.com/c4arl0s/pro-design-patterns-in-swift#3-Creating-the-SportsStore-App)
+1. [x] [1. Understanding Design Patterns](https://github.com/c4arl0s/pro-design-patterns-in-swift#1-Understanding-Design-Patterns)
+2. [x] [2. Getting Used to Xcode](https://github.com/c4arl0s/pro-design-patterns-in-swift#2-Getting-Used-to-Xcode)
+3. [x] [3. Creating the SportsStore App](https://github.com/c4arl0s/pro-design-patterns-in-swift#3-Creating-the-SportsStore-App)
 4. [ ] [4. The Object Template Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#4-The-Object-Template-Pattern)
 5. [ ] [5. The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#5-The-Prototype-Pattern)
 6. [ ] [6. The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#6-The-Singleton-Pattern)
@@ -111,7 +111,16 @@ Some programmers treat design patterns as immutable laws. They are `pattern zeal
 There is no point trying to argue with a pattern zealot. They get their pleasure from being able to reference ever more obscure sources, and there is no effective way to ground their views in reality. My advice is to ignore them and focus on building good software by making it robust, scalable, and flexible enough to cope with changes, all of which can be aided by the design patterns described in this book.
 
 # 2. [Getting Used to Xcode](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
+
+It was created in a basic course.
+
 # 3. [Creating the SportsStore App](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
+
+This was created using knowledge from a basic course, I am going to list all the steps that I did. Open the project from the Projects directory.
+
+| - Creating an Unstructured iOS App Project - Creating the Project - Understanding the Xcode Layout - Defining the Data - Creating the Basic Layout - Adding the Basic Components - Configuring Auto Layout - Testing the Basic Layout - Implementing the Total Label - Creating the Reference - Updating the Display - Implementing the Table Cells - Defining the Custom Table Cell and Layout - Setting the Table Cell Layout Constraints - Creating the Table Cell Class and Outlets - Implementing the Data Source Protocol - Registering the Data Source - Testing the Data Source - Handling the Editing Actions - Handling the Events - Testing the SportsStore App | <img width="514" alt="Screenshot 2023-10-21 at 1 42 49 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/85a98c06-403a-4b44-81ee-dc01d5207243"> |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
+
 # 4. [The Object Template Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 6. [The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
