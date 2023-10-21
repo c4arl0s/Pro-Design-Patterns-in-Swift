@@ -137,6 +137,90 @@ to start by explaining the benefit of using classes and structs as templates fro
 | Are there any related patterns?                                  | The prototype pattern, which I describe in Chapter 5, provides an alternative technique for creating objects.                                                                                                                                                                                                                                                                                          |
 # Preparing the Example Project
 
+For this chapter, I created an Xcode OS X Command Line Tool project called ObjectTemplate following the same process I described in Chapter 3. No other preparation is required at the moment.
+
+# Understanding the Problem Addressed by the Pattern
+
+In Chapter 3, I used Swift tuples to define the data that the SportsStore application works with. Here is an example of a tuple from that code:
+
+```swift
+("Kayak", "A boat for one person", "Watersports", 275.0, 10)
+```
+
+Tuples are a set of values grouped together and are convenient and easy to use, but they present problems that mean their use should be limited. Below is showing the statements I added to the `main.swift` file, which Xcode adds to Command Line Tool projects.
+
+```swift
+var products = [
+    ("Kayak", "A boat for one person", 275.0, 10),
+    ("Lifejacket", "Protective and fashionable", 48.95, 14),
+    ("Soccer Ball", "FIFA-approved size and weight", 19.5, 32)];
+
+func calculateTax(product:(String, String, Double, Int)) -> Double {
+    return product.2 * 0.2;
+}
+
+func calculateStockValue(tuples:[(String, String, Double, Int)]) -> Double {
+    return tuples.reduce(0, {
+        (total, product) -> Double in
+            return total + (product.2 * Double(product.3))
+}); }
+
+println("Sales tax for Kayak: $\(calculateTax(products[0]))");
+println("Total value of stock: $\(calculateStockValue(products))");
+```
+
+In this code, I defined an array of tuples representing products and two functions that operate on them. The calculateTax function defines a tuple parameter that it uses to calculate the sales tax on a price (I live in London and have set the rate to 20 percent, which is the sales tax for the United Kingdom). The calculateStockValue function operates on the array of tuples to calculate the total value of the products by multiplying the number of items in stock by the price of the product. I call both functions and write out the results using the println function. Running the project produces the following output in the Xcode debug console:
+
+```console
+Sales tax for Kayak: $55.0
+Total value of stock: $4059.3
+```
+
+One of the recurring themes in this book is that tightly coupled components are the antithesis of design patterns. Two components are tightly coupled when one depends on the inner workings of another, or, put another way, when you can make a change to one component without also updating the other.
+
+The term component is loosely defined, and in this case I am using it to refer to the array of tuples and the functions that operate on it. Figure 4-1 shows the tight couplings from the playground that exist between two functions and the tuples.
+
+<img width="692" alt="Screenshot 2023-10-21 at 4 26 37 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/7b52f7ba-a327-4a14-b831-fe21feffcc72">
+
+Both functions are tightly coupled to the tuples, both in the way they define their parameters and in the function bodies. When defining parameters for functions that operate on tuples, the number, order, and types of the tuple values have to match exactly. When operating on tuples in a function body, the index values used to get or set values have to be defined explicitly. Here is the calculateSalesTax function, in which I have highlighted the dependencies on the tuples:
+
+<img width="622" alt="Screenshot 2023-10-21 at 4 28 25 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/2af6a615-a41a-4311-a4df-51c55ae2a93d">
+
+And here are the dependencies that the calculateStockValue function has:
+
+<img width="619" alt="Screenshot 2023-10-21 at 4 29 26 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/b2f8185a-20d3-4b1a-bbf8-e33e1fc422ca">
+
+The dependency on the structure of the tuples means that the functions and the tuples are tightly coupled. The most obvious impact of tight coupling is that a change to the tuples forces corresponding changes wherever there is a dependency. In Listing 4-2, you can see what happens when I remove a value from the tuples.
+
+<img width="556" alt="Screenshot 2023-10-21 at 4 32 27 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/072f7582-eb98-4b57-9523-3ccd186b9638">
+
+```swift
+print("Sales tax for Kayak: $\(calculateTax(products[0]))");
+print("Total value of stock: $\(calculateStockValue(products))");
+```
+
+> UNDERSTANDING WHY TIGHT COUPLINGS CAN BE A PROBLEM Tightly coupled components make code harder to maintain, which means that it takes more effort to make changes and test their impact. As Listing 4-2 shows, a change in one component requires a change in those that depend on its implementation. In an application that contains lots of tight coupling, these changes can cascade through the code, and the act of making a simple fix or adding a new feature becomes a substantial rewrite. Loosely coupled components are a key goal in design patterns, but, as I explained in Chapter 1, it doesn’t always make sense to apply a pattern to an application. There are some kinds of development where tight couplings are perfectly reasonable, either because they offer performance gains (such as real-time software) or because the application is unlikely to require any maintenance (because it is extremely simple or has a short life). Be careful when deciding you don’t expect to maintain the code; there are few applications where this turns out to be true, even if that was the original intent.
+
+I removed the value that describes the product, and the highlighted statements show the corresponding changes required in the functions. In a real project, these changes can mount up, and if they affect other tight couplings, then number of changes can lead to a substantial portion of the code in the application being modified. This level of change is hard to manage and requires thorough testing to ensure that the changes have been applied consistently and that the changes have not introduced any new bugs.
+
+# Understanding the Object Template Pattern
+
+The object template pattern uses a class or struct to define a template from which objects are created. When an application component requires an object, it calls on the Swift runtime to create it by specifying the name of the template and any runtime initialization data values that are required to configure the object. There are three operations that make up the object template pattern, as illustrated by Figure 4-2.
+
+<img width="655" alt="Screenshot 2023-10-21 at 4 39 28 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/c7805ec6-90de-470e-8237-5c732f6d0c18">
+
+The first operation is the calling component asking the Swift runtime to create an object, providing the name of the template to use and any runtime data values that are required to customize the object that will be created.
+
+In the second operation, the Swift runtime allocates the memory required to store the object and uses the template to create it. Templates contain initializer methods that are used to prepare the object for use by settings its initial state, through either the runtime values supplied by the calling component or the values defined in the template (or both), and the Swift runtime calls the initializer to prepare the object for use. 
+
+In the final operation, the Swift runtime gives the object it has created to the calling component. This three-step process can be repeated over and over again so that a single template can be used to create multiple objects.
+
+> UNDERSTANDING CLASSES STRUCTS, OBJECTS, AND INSTANCES There are some object-oriented programing terms that are used loosely in day-to-day development but that can be confusing when it comes to understanding design patterns. The critical terms for this pattern are class, struct, object, and instance. Classes and structs are both templates, which are the recipes that Swift follows for the object template pattern. Swift follows the instructions in the template to create new objects. The same template can be reused to create multiple objects. Each object is different, but it is created using the same instructions, just like a recipe can be used to create multiple cakes (add one Int, a method to change its value, and so on). The word instance has the same meaning as object, but it is used to refer to the name of the pattern used to create that object so that a Product object can also be called an instance of the Product class. The important point is that classes and structs are the instructions you write during development and objects are created when the application. When you change the value stored by an object, for example, it doesn’t change the pattern used to create it.
+
+# Implementing the Object Template Pattern
+
+Listing 4-3 shows the contents of a new file called Product.swift that I added to the example project and used to define a class called Product.
+
 
 
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
