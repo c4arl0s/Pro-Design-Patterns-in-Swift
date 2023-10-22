@@ -436,7 +436,9 @@ The other technique I used is a `calculated property that defines only a get cla
 
 > If you have moved to Swift from a language such as C# or Java, then you can most closely re-create the access controls you are used to by defining each class or struct in its own `.swift` file and using the `private` and `internal` access levels.
 
+# Applying the Product Class
 
+Applying the `Product` class is a simple process. To use the `Product` class, I need to replace the tuples in the `ViewController.swift` file with `Product` instances and replace the references to individual tuple values with the corresponding Product properties. Listing 4-14 shows the changes I made.
 
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 6. [The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
