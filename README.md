@@ -221,6 +221,187 @@ In the final operation, the Swift runtime gives the object it has created to the
 
 Listing 4-3 shows the contents of a new file called Product.swift that I added to the example project and used to define a class called Product.
 
+```swift
+class Product {
+    var name:String;
+    var description:String;
+    var price:Double;
+    var stock:Int;
+
+    init(name:String, description:String, price:Double, stock:Int) {
+        self.name = name;
+        self.description = description;
+        self.price = price;
+        self.stock = stock;
+    }
+}
+```
+
+I have created a simple class in the listing to replicate the tuple-based approach as closely as possible, but I will add features to the class shortly. Listing 4-4 shows how I have updated the `main.swift` file to use the `Product` class.
+
+<img width="631" alt="Screenshot 2023-10-21 at 6 16 08 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/552ae658-60c6-40f7-9c28-71121516adf5">
+
+```swift
+var products = [
+    Product(name: "Kayak", description: "A boat for one person",
+        price: 275, stock: 10),
+    Product(name: "Lifejacket", description: "Protective and fashionable",
+        price: 48.95, stock: 14),
+    Product(name: "Soccer Ball", description: "FIFA-approved size and weight",
+        price: 19.5, stock: 32)];
+
+func calculateTax(product:Product) -> Double {
+    return product.price * 0.2;
+}
+
+func calculateStockValue(productsArray:[Product]) -> Double {
+    return productsArray.reduce(0, {(total, product) -> Double in
+            return total + (product.price * Double(product.stock))
+    }); 
+}
+
+print("Sales tax for Kayak: $\(calculateTax(products[0]))");
+print("Total value of stock: $\(calculateStockValue(products))");
+```
+
+Like most patterns, using a class to define a template for objects requires some additional work, but it has substantial benefits; in fact, the benefits are so fundamental to effective OO programming that the uses of classes and structs are often taken as givens even when quicker and more direct approaches, such as tuples, are available.
+
+When using a tuple, the definitions of the structure of the data and a set of values are performed in a simple step, but there are two steps when using a template: defining the template and creating objects using the template.
+
+# Understanding the Benefits of the Pattern
+
+The benefits of using a template are significant and are generally worth the effort required to define the template, whether it is a class or a struct. Tuples are a nice feature, but for the serious software developer, classes and structs are usually preferable because they provide a level of control and loose coupling that tuples can’t match, as I explain in the sections that follow.
+
+# The Benefit of Decoupling
+
+I made the example in Listing 4-4 as simple as possible. It doesn’t take advantage of the features that classes and structs provide, but it does allow me to demonstrate that even the simplest template reduces the impact of changes. Listing 4-5 shows how I removed the `description` property from the `Product` class.
+
+```swift
+class Product {
+    var name:String;
+    var price:Double;
+    var stock:Int;
+    
+    init(name:String, price:Double, stock:Int) {
+        self.name = name;
+        self.price = price;
+        self.stock = stock;
+    } 
+}
+```
+
+Listing 4-6 shows the corresponding changes I made to the `main.swift` file.
+
+<img width="543" alt="Screenshot 2023-10-21 at 6 15 36 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/469629f6-ad4b-40b7-bf4c-37e38b83e194">
+
+I have updated the statements that create instances of the `Product` class so they no longer provide a value for the `description` property. The important point to note is that the change I made to the `Product` class has no impact on the `calculateTax` and `calculateStockValue` functions at all, and that’s because each property in the class is defined and accessed independently of the other properties and because neither of the functions relies on the description property.
+
+The use of classes and structs limits the scope of changes to just the code that is directly impacted by the change and prevents the widespread change cascades that can arise when using less structured data types, such as tuples.
+
+# The Benefit of Encapsulation
+
+The most important benefit from using classes or structs as templates for data objects is the support for `encapsulation`. Encapsulation is one of the core ideas behind object-oriented programming, and there are two aspects of this idea that have a bearing on this chapter.
+
+`The first aspect is that encapsulation allows data values and the logic that operates on those values to be combined in a single component`. Combining the data and logic makes it easier to read the code because everything related to the data type is defined in the same place. Listing 4-7 shows how I have updated the Product class so that it includes some logic.
+
+<img width="416" alt="Screenshot 2023-10-21 at 6 20 30 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/0e985469-95c5-4aac-993d-2439250c5553">
+
+I have added a `calculateTax` method, which accepts a tax rate as an argument and uses it to calculate the sales tax, and a `stockValue` computed property, which implements a `getter` clause that calculates the total value of the stock. To reflect these changes, I updated the code statements in the `main.swift` file that operate on `Product` objections to use the new method and property, as shown in Listing 4-8.
+
+<img width="563" alt="Screenshot 2023-10-21 at 6 22 52 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/464914c5-d122-41be-8a26-2d10e896e21a">
+
+These may seem like simple changes, but something important has happened: the `Product` class now has a public presentation and a private implementation, as illustrated by Figure 4-3.
+
+<img width="613" alt="Screenshot 2023-10-21 at 6 25 53 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/bc1f03e0-f0bf-490d-84c5-5c24e3e62dbf">
+
+The public presentation is the API that other components can use. Any component can `get` or `set` the values of the `name`, `price`, and `stock` properties and use them in any way they need. The public presentation also includes the `stockValue` property and the `calculateTax` method, but—and this is the important part — not their implementations.
+
+> Tip Don’t confuse the idea of a `private implementation` with the use of the `private` keyword. The `private` keyword limits who can use a class, method, or property, but even when the `private` keyword isn’t used, the implementation of methods and computed properties isn’t visible to calling components.
+
+The ability to present a `property` or `method` without exposing its implementation makes it easy to `break tight couplings` because it is impossible for another component to depend on the implementation. 
+
+As an example, Listing 4-9 shows how I have changed the implementation of the `calculateTax` method to define a maximum tax amount. Because the calculation is performed in the implementation of the `Product` object, the change is invisible to other components, which trust that the `Product` class knows how to perform its calculations.
+
+<img width="460" alt="Screenshot 2023-10-21 at 6 30 38 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/f8e1ccb9-49e8-45d0-aba6-2f6379cda07b">
+
+I have used the min function from the Swift standard library to cap the amount of sales tax at `$10`. I have shown only the `calculateTax` method in Listing 4-9 because no other code statement in the playground has to change to accommodate the new tax calculation; the change is in the `private` implementation part of the `Product` class, with which other components are unable to create dependencies. Running the application produces the following results:
+
+```console
+Sales tax for Kayak: $10.0
+Total value of stock: $4059.3
+```
+
+# The Benefit of an Evolving Public Presentation
+
+A nice feature of Swift is the way that you can evolve the public presentation of a class over time as the application changes. As matters stand, the `stock` property is a standard stored property that can be set to any `Int` value, but it doesn’t make sense to have a negative number of items in stock, and doing so will affect the result returned by the `stockValue` calculated property.
+
+Swift allows me to seamlessly replace the stock-stored property with a calculated property whose implementation can enforce a validation policy to ensure that the stock level is never less than zero. Listing 4-10 shows the change that I made to alter the way the property is handled.
+
+<img width="425" alt="Screenshot 2023-10-21 at 6 36 12 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/c1f7bf3f-0ca6-492d-acd7-2b0e6a273379">
+
+```swift
+class Product {
+
+    var name:String;
+    var price:Double;
+    private var stockBackingValue:Int = 0;
+    
+    var stock:Int {
+        get {
+            return stockBackingValue;
+        }
+        set {
+            stockBackingValue = max(0, newValue);
+        } 
+    }
+
+   init(name:String, price:Double, stock:Int) {
+       self.name = name;
+       self.price = price;
+       self.stock = stock;
+    }
+    
+    func calculateTax(rate: Double) -> Double {
+        return min(10, self.price * rate);
+    }
+    
+    var stockValue: Double {
+        get {
+            return self.price * Double(self.stock);
+        }
+    } 
+}
+```
+
+I have defined a backing variable that will hold the value of the `stock` property and have replaced the stored `stock` property with a calculated property that has a `getter` and `setter`. The `getter` simply returns the value of the backing property, which I have named `stockBackingValue`, but the `setter` uses the max function from the standard library to set the backing value to zero when a negative value is used to set the property. The effect of this change is that the `public` and `private` parts of the `Product` class have changed, but in a way that does not impact the code that uses the class, as shown in Figure 4-4.
+
+<img width="633" alt="Screenshot 2023-10-21 at 6 41 31 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/a3a8d5d4-70a0-4b1d-8741-e19fbe4ed6a9">
+
+Listing 4-11 shows the changes I made to the `main.swift` file to check the new validation property.
+
+<img width="547" alt="Screenshot 2023-10-21 at 11 33 57 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/1aa6fe20-9550-4eaa-b9af-17a4abcddb5b">
+<img width="556" alt="Screenshot 2023-10-21 at 11 34 15 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/6605ad5e-6f0f-48c7-9cdd-aed2d22799fc">
+
+I added two statements to the end of the playground to test the stock property’s ability to deal with negative values, `but no other changes are required`. In particular, the code statements that rely on the stock property are unaware of the change from a stored property to a calculated one. Here is the console output that is produced when the example application is run:
+
+```console
+Sales tax for Kayak: $10.0
+Total value of stock: $4059.3
+Stock Level for Kayak: 0
+```
+
+The last message shows the effect of the calculated property: I set the `stock` property to `-50`, but when I get the property value, I receive `0`.
+
+# Understanding the Pitfalls of the Pattern
+
+The pitfall to avoid with this pattern is choosing the wrong kind of template, and that usually means using a struct when a class would be more appropriate. Swift classes and structs have a lot in common, but there is one important difference in the context of this pattern: `structs are value objects, and classes are reference objects`. I explain this difference in more detail in Chapter 5, in which I describe the prototype pattern.
+
+# Examples of the Object Template Pattern in Cocoa
+
+Because this is such a fundamental pattern, classes and structs can be found throughout the Cocoa frameworks and the built-in Swift types. `Basic types such as strings, arrays, and dictionaries are implemented as structs`, and `classes are used to represent everything from network connections to user interface components`. I am not going to list all of the classes and structs that are used in iOS and the Cocoa frameworks, but if you want to get a sense of how deeply rooted this pattern is in iOS development, take a look at the classes I used to create the `SportsStore` application. 
+
+In addition to the `Product` class I created in this chapter, I have relied on `NSNumberFormatter` to format currency strings, `UIViewController` to manage the view presented by the app, and classes such as `UILabel`, `UITextField`, and `UIStepper` to preset layout components to the user.
+
 
 
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
