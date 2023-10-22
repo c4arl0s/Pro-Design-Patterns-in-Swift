@@ -402,7 +402,31 @@ Because this is such a fundamental pattern, classes and structs can be found thr
 
 In addition to the `Product` class I created in this chapter, I have relied on `NSNumberFormatter` to format currency strings, `UIViewController` to manage the view presented by the app, and classes such as `UILabel`, `UITextField`, and `UIStepper` to preset layout components to the user.
 
+# Applying the Pattern to the SportsStore App
 
+In this section, I will create and apply a `Product` class and use it to remove the tuples from the `SportsStore` app. Don’t worry if you didn’t follow the step-by-step instructions in Chapter 3.
+
+Select Swift File from the iOS ➤ Source category and click the Next button. Set the file name to `Utils.swift` and ensure that SportsStore is checked in the Targets list,
+
+[Insert updated code]
+
+I have defined a type method (also known as a `static` method) called `currencyStringFromNumber` that accepts a `Double` value and returns a number formatted as a currency value.
+
+> For example, the value `1000.1` would be formatted into the string `$1,000.10`. (The currency sign is applied based on the `locale` settings of the device. Outside of the United States, the dollar sign may be replaced with another symbol, such as those for the euro or the British pound.)
+
+`String` formatting isn’t part of the patterns I describe in this table, so I have defined this code in the `Utils.swift` file to keep it out of the way. I’ll use the new type method when I add to the information displayed by the label at the bottom of the `SportsStore` layout.
+
+# Creating the Product Class
+
+As I explain in the “Understanding Swift Access Control” sidebar, the `private` keyword doesn’t restrict access to code defined in the same class file. Since I want to emphasize the `public`/`private` separation provided by this pattern, I am going to create a new file and use it to define the `Product` class. Following the process I described in the previous section, add a file called `Product.swift` to the `SportsStore` project and use it to define the class shown in Listing 4-13.
+
+Annotating a property with private(set) means that a property can be read from code in other files in the same module but set by code only in the `Product.swift` file. I have used `private(set)` for most of the properties in Listing 4-13, which has the effect of allowing the values to be `set` using the arguments passed to the class initializer but not otherwise.
+
+The `Product` class shown in Listing 4-13 puts emphasis on the separation of the `public presentation` from the `private implementation`, which I have achieved in a couple of ways. The first way is by annotating the properties with `private` or `private(set)`. The `private` keyword hides whatever it is applied to from code outside of the current file, and this has the effect of making the `priceBackingValue` and `stockLevelBackingValue` properties entirely invisible to the rest of the `SportsStore` application because the `Product` class is the only thing in the `Product.swift` file.
+
+> Tip could have achieved a similar effect using constants, but I want to emphasize the object template pattern in this chapter, and private(set) is a more useful example.
+
+The other technique I used is a `calculated property that defines only a get clause`. The implementation of the calculated property is `private` even though the property itself is available throughout the current module.
 
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 6. [The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
