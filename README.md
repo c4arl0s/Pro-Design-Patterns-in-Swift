@@ -428,6 +428,16 @@ The `Product` class shown in Listing 4-13 puts emphasis on the separation of the
 
 The other technique I used is a `calculated property that defines only a get clause`. The implementation of the calculated property is `private` even though the property itself is available throughout the current module.
 
+> UNDERSTANDING SWIFT ACCESS CONTROL Swift takes an unusual approach to access control, which can catch out the unwary. There are three levels of access control, which are applied using the `public`, `private`, and `internal` keywords. The `private` keyword is the most restrictive; it restricts access to the classes, structs methods, and properties to code defined in the same file. Restricting access on a per-file basis is a different approach from most languages and means that `private` has no effect in Xcode playgrounds.
+
+> The `internal` keyword denotes that access is allowed within the current module. This is the default level of access control that is used if no keyword is applied. For most iOS developers, internal protection will have the effect of allowing a class, struct, method, function, or property to be used throughout a project.
+
+> The `public` keyword applies the least restrictive level of control and allows access from anywhere, including outside the current module. This is of most use to developers who are creating frameworks and who will need to use the `public` keyword to define the `API` that the framework presents to other developers.
+
+> If you have moved to Swift from a language such as C# or Java, then you can most closely re-create the access controls you are used to by defining each class or struct in its own `.swift` file and using the `private` and `internal` access levels.
+
+
+
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 6. [The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 7. [The Object Pool Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
