@@ -73,14 +73,14 @@ For each of the design patterns in this book, I describe the problem the pattern
 
 It is easy to accept that design patterns are a good thing. Everyone understands the appeal of proven solutions used on countless projects to solve difficult problems. It is much harder to convince other programmers on the team that a specific pattern should be adopted in a project.
 You can assess whether an insurance policy represents value for money by asking yourself some questions:
-  Does the policy address something bad that is likely to happen to me?
-  How often does the bad thing occur?
-  Is the cost of the policy a small fraction of the cost of dealing with the bad thing?
+- Does the policy address something bad that is likely to happen to me?
+- How often does the bad thing occur?
+- Is the cost of the policy a small fraction of the cost of dealing with the bad thing?
 These simple questions make it easy to understand that there is no point in buying car insurance if you don’t have a car or if there are no car thieves in your town. They also highlight the poor value in paying $10,000 per year to insure an $11,000 car unless you anticipate multiple thefts (in which case, you might also consider moving to a different area).
 The point is clear even though this is a simplistic view of insurance: don’t buy a policy unless it offers some benefit. The same is true for design patterns: don’t adopt a pattern unless it offers value that you can quantify and articulate to others. The questions needed to assess the value for design patterns are similar:
-  Does the pattern identify a problem that I am likely to encounter?
-  How often does this problem occur?
-  Do I care enough about avoiding the risk of having to fix the problem in the future to undertake the work of implementing the design pattern today?
+- Does the pattern identify a problem that I am likely to encounter?
+- How often does this problem occur?
+- Do I care enough about avoiding the risk of having to fix the problem in the future to undertake the work of implementing the design pattern today?
 
 It can be hard to answer these questions. There are no actuarial tables for software development, and it can be hard to estimate the amount of future effort that will be required to fix a problem (especially one that may not arise).
 
@@ -439,6 +439,49 @@ The other technique I used is a `calculated property that defines only a get cla
 # Applying the Product Class
 
 Applying the `Product` class is a simple process. To use the `Product` class, I need to replace the tuples in the `ViewController.swift` file with `Product` instances and replace the references to individual tuple values with the corresponding Product properties. Listing 4-14 shows the changes I made.
+
+<img width="1102" alt="Screenshot 2023-10-22 at 2 41 25 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/b815c86b-ca2b-4ec3-b0e8-12622cc6f90d">
+
+<img width="1132" alt="Screenshot 2023-10-22 at 2 42 42 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/7fd95ac4-58dd-4193-abaa-8a0fada7b69d">
+
+<img width="1129" alt="Screenshot 2023-10-22 at 2 43 30 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/2e96d825-f494-4c5b-8dde-f5ef4dea7c7d">
+
+<img width="1124" alt="Screenshot 2023-10-22 at 2 45 45 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/b1b285d5-a9a7-494b-b7b5-af513ed428b0">
+
+<img width="1126" alt="Screenshot 2023-10-22 at 2 46 25 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/35d8a2fd-3024-464d-8849-758675c581d8">
+
+The transition to using the `Product` class is simple. In preparing the code for Listing 4-14, I started by using the class in the products data array and then fixed all of the compiler errors until all references to the tuples had been replaced. This is a dull and error-prone process, which is why it is a good idea to start a project with classes and structs if you can (something that, sadly, isn’t always possible when taking over existing code).
+
+# Ensuring View and Model Separation
+
+There are a couple of points to note about the code in Listing 4-14. The first is that the `ViewController.swift` file defines a class called `ProductTableCell` that I used to contain the references to the UI components that represent a `product` in the app layout and to locate a `product` when the user changes a stock level. In Listing 4-14, I replaced a variable that referred to the index position of a tuple in the products array with references to a `Product` object instead, like this:
+
+<img width="1131" alt="Screenshot 2023-10-22 at 2 50 44 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/08edb3c5-1961-4bb6-b459-d5af7b9697ee">
+
+You may be wondering why I didn’t combine the `ProductTableCell` with the `Product` class and have a single entity that represents a product and the UI components that are used to display it. I explain the reasons in detail in Part 5 when I describe the Model/View/Controller (MVC) pattern, but the short answer is that it is good practice to separate the data in the application from the way it is presented to the user (in MVC parlance, separating the model from the view). Enforcing this separation allows the same data to be displayed in different ways more easily. I might need to add a second view to the app that presents the products in a grid, and without separation between the model and the view, the combined class would need to have references to every UI component that is involved in both views, which quickly becomes unwieldy and makes applying changes a tricky and error-prone process.
+
+# Expanding the Summary Display
+
+I have been critical of tuples throughout this chapter, but they can be a useful language feature when they are used in a self-contained way, rather than to represent application-wide data.
+
+In Listing 4-15, you can see an example of how I like to use tuples. I have changed the implementation of the `displayStockTotal` method of the `ViewController` class so that a single call to the global reduce function is used to calculate the number of items in stock and the total value of that stock (which I format using the `currencyStringFromNumber` method I defined in Listing 4-12).
+
+<img width="1127" alt="Screenshot 2023-10-22 at 7 56 44 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/c174c1e9-e809-4803-960c-bf037304a21c">
+
+```swift
+func displayStockTotal() {
+    let finalTotals: (Int, Double) = products.reduce((0, 0.0), {
+        (totals, product) -> (Int, Double) in
+        return (totals.0 + product.stockLevel, totals.1 + product.stockValue)
+    })
+    totalStockLabel.text = "\(finalTotals.0) Products in Stock. Total Value: \(Utils.currencyStringFromNumber(number: finalTotals.1))"
+}
+```
+Tuples allow me to generate two total values (one for the number of items in stock and one for the value of that stock) for each iteration of the `reduce` function. I could have achieved this in different ways—such as by defining a `struct` that has two properties or by using a for loop to enumerate the array and update two local variables—but using tuples works nicely with Swift closures and produces code that is simple and easy to read. This kind of use, where creating a class or struct would be overkill since the data isn’t exported outside the method, plays to the strengths of the tuples and doesn’t cause the tight coupling and maintenance problems that arise when passing tuples more widely within the application.
+
+You can see the effect of the additional total I calculate by starting the application. The label at the bottom of the layout will display the number and value of the items in stock, as illustrated by Figure 4-7.
+
+<img width="514" alt="Screenshot 2023-10-22 at 7 58 55 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/17d6e0a8-afa0-4937-9738-159d125ef65f">
 
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 6. [The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
