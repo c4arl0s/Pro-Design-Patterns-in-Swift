@@ -418,7 +418,7 @@ I have defined a type method (also known as a `static` method) called `currencyS
 
 # Creating the Product Class
 
-As I explain in the “Understanding Swift Access Control” sidebar, the `private` keyword doesn’t restrict access to code defined in the same class file. Since I want to emphasize the `public`/`private` separation provided by this pattern, I am going to create a new file and use it to define the `Product` class. Following the process I described in the previous section, add a file called `Product.swift` to the `SportsStore` project and use it to define the class shown in Listing 4-13.
+As I explain in the [“Understanding Swift Access Control”](https://github.com/c4arl0s/17accesscontrol#2-access-levels) sidebar, the `private` keyword doesn’t restrict access to code defined in the same class file. Since I want to emphasize the `public`/`private` separation provided by this pattern, I am going to create a new file and use it to define the `Product` class. Following the process I described in the previous section, add a file called `Product.swift` to the `SportsStore` project and use it to define the class shown in Listing 4-13.
 
 Annotating a property with private(set) means that a property can be read from code in other files in the same module but set by code only in the `Product.swift` file. I have used `private(set)` for most of the properties in Listing 4-13, which has the effect of allowing the values to be `set` using the arguments passed to the class initializer but not otherwise.
 
@@ -428,7 +428,7 @@ The `Product` class shown in Listing 4-13 puts emphasis on the separation of the
 
 The other technique I used is a `calculated property that defines only a get clause`. The implementation of the calculated property is `private` even though the property itself is available throughout the current module.
 
-> UNDERSTANDING SWIFT ACCESS CONTROL Swift takes an unusual approach to access control, which can catch out the unwary. There are three levels of access control, which are applied using the `public`, `private`, and `internal` keywords. The `private` keyword is the most restrictive; it restricts access to the classes, structs methods, and properties to code defined in the same file. Restricting access on a per-file basis is a different approach from most languages and means that `private` has no effect in Xcode playgrounds. For more information, open this link about [Access Levels](https://github.com/c4arl0s/17accesscontrol#2-access-levels)
+> [UNDERSTANDING SWIFT ACCESS CONTROL](https://github.com/c4arl0s/17accesscontrol#2-access-levels) Swift takes an unusual approach to access control, which can catch out the unwary. There are three levels of access control, which are applied using the `public`, `private`, and `internal` keywords. The `private` keyword is the most restrictive; it restricts access to the classes, structs methods, and properties to code defined in the same file. Restricting access on a per-file basis is a different approach from most languages and means that `private` has no effect in Xcode playgrounds. For more information, open this link about [Access Levels](https://github.com/c4arl0s/17accesscontrol#2-access-levels)
 
 > The `internal` keyword denotes that access is allowed within the current module. This is the default level of access control that is used if no keyword is applied. For most iOS developers, internal protection will have the effect of allowing a class, struct, method, function, or property to be used throughout a project.
 
