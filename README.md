@@ -335,7 +335,7 @@ Total value of stock: $4059.3
 
 A nice feature of Swift is the way that you can evolve the public presentation of a class over time as the application changes. As matters stand, the `stock` property is a standard stored property that can be set to any `Int` value, but it doesn’t make sense to have a negative number of items in stock, and doing so will affect the result returned by the `stockValue` calculated property.
 
-Swift allows me to seamlessly replace the stock-stored property with a calculated property whose implementation can enforce a validation policy to ensure that the stock level is never less than zero. Listing 4-10 shows the change that I made to alter the way the property is handled.
+Swift allows me to seamlessly replace the stock-stored property with a `calculated property` whose implementation can enforce a validation policy to ensure that the stock level is never less than zero. Listing 4-10 shows the change that I made to alter the way the property is handled.
 
 <img width="425" alt="Screenshot 2023-10-21 at 6 36 12 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/c1f7bf3f-0ca6-492d-acd7-2b0e6a273379">
 
@@ -373,7 +373,7 @@ class Product {
 }
 ```
 
-I have defined a backing variable that will hold the value of the `stock` property and have replaced the stored `stock` property with a calculated property that has a `getter` and `setter`. The `getter` simply returns the value of the backing property, which I have named `stockBackingValue`, but the `setter` uses the max function from the standard library to set the backing value to zero when a negative value is used to set the property. The effect of this change is that the `public` and `private` parts of the `Product` class have changed, but in a way that does not impact the code that uses the class, as shown in Figure 4-4.
+I have defined a backing variable that will hold the value of the `stock` property and have replaced the stored `stock` property with a `calculated property` that has a `getter` and `setter`. The `getter` simply returns the value of the backing property, which I have named `stockBackingValue`, but the `setter` uses the max function from the standard library to set the backing value to zero when a negative value is used to set the property. The effect of this change is that the `public` and `private` parts of the `Product` class have changed, but in a way that does not impact the code that uses the class, as shown in Figure 4-4.
 
 <img width="633" alt="Screenshot 2023-10-21 at 6 41 31 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/a3a8d5d4-70a0-4b1d-8741-e19fbe4ed6a9">
 
@@ -390,7 +390,7 @@ Total value of stock: $4059.3
 Stock Level for Kayak: 0
 ```
 
-The last message shows the effect of the calculated property: I set the `stock` property to `-50`, but when I get the property value, I receive `0`.
+The last message shows the effect of the `calculated property`: I set the `stock` property to `-50`, but when I get the property value, I receive `0`.
 
 # Understanding the Pitfalls of the Pattern
 
@@ -426,7 +426,8 @@ The `Product` class shown in Listing 4-13 puts emphasis on the separation of the
 
 > Tip could have achieved a similar effect using constants, but I want to emphasize the object template pattern in this chapter, and private(set) is a more useful example.
 
-The other technique I used is a `calculated property that defines only a get clause`. The implementation of the calculated property is `private` even though the property itself is available throughout the current module.
+
+> [CALCULATED PROPERTY:](https://github.com/c4arl0s/Structures#9-computed-properties) The other technique I used is a [`calculated property`](https://github.com/c4arl0s/Structures#9-computed-properties) or [`Computed Property`](https://github.com/c4arl0s/Structures#9-computed-properties) that defines only a `get` clause. The implementation of the [`calculated property`](https://github.com/c4arl0s/Structures#9-computed-properties) is `private` even though the property itself is available throughout the current module.
 
 > [UNDERSTANDING SWIFT ACCESS CONTROL](https://github.com/c4arl0s/17accesscontrol#2-access-levels) Swift takes an unusual approach to access control, which can catch out the unwary. There are three levels of access control, which are applied using the `public`, `private`, and `internal` keywords. The `private` keyword is the most restrictive; it restricts access to the classes, structs methods, and properties to code defined in the same file. Restricting access on a per-file basis is a different approach from most languages and means that `private` has no effect in Xcode playgrounds. For more information, open this link about [Access Levels](https://github.com/c4arl0s/17accesscontrol#2-access-levels)
 
