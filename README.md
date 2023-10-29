@@ -298,6 +298,35 @@ I have updated the statements that create instances of the `Product` class so th
 
 The use of classes and structs limits the scope of changes to just the code that is directly impacted by the change and prevents the widespread change cascades that can arise when using less structured data types, such as tuples.
 
+# Coupling
+
+When a type (`class`/`struct`) works with another type, we call it **`coupling`**. In general, we want to reduce coupling in our app to the minimum. 
+
+> zero is not realistic. After all, it is a system 
+
+Think of two objects that work together - the more they know about each other, the more chances this relationship will break in the future. Classes evolve and change, and those changes may have impacts on other related classes as well.
+
+# Types of Coupling
+
+But what exactly do we mean when we say **"Coupled objects"**?. There are several types of coupling: **Subclass, Share Object, dependencies, and Side Effects**
+
+- **Subclass coupling**: When a class is inherited from another class, it depended on its superclass, and those two classes become coupled. Not only that - the entire inheritance hierarchy is coupled. But this is just logical - think how little you know what happens when you override a method in a class with five levels of inheritance. Many developers subclass when they could just use a protocol instead and reduce coupling.
+- **Shared Objects**: When different objects mutate properties on a shared object, and at the same time, they depend on it, they are coupled **through the shared objects**. Re-think whether the shared object is required to be shared. This one of the drawbacks with the Singleton pattern - sharing an object throughout the system reduces your ability to predict how your code behaves as a system. Second, you need to think about restrictions for changing the shared object state - what objects allow to change its state and when. The fewer objects can change the state, the smaller the coupling is.
+- **Dependencies**: If your class relies on another clas without a change to change it, you have got a tight coupling here. There are many ways to decouple such a thing - from injecting new dependencies, delegate patterns, protocol-based dependency, or even using a closure.
+- **Side Effects**: Always examine your code for side effects. If you have a function that modifies other object´s properties or changes persistent data, these are side effects. Try to reduce side effects to a minimum. Follow the **"Single-Responsability Principle"** so isolate these side effects to one place and by that loosen the coupling of your objects.
+
+# How to Decouple Existing Code?
+
+Decoupling an existing code does not have to be a big refactor task. Sometimes small changes are enough to reduce the coupling level in your project. Continue on [Pro iOS testing](https://github.com/c4arl0s/Pro-iOS-Testing)
+
+# Coupling Severity Levels
+
+We have four levels of severity
+
+- **Tightly Coupled**: A class holds a dependency that cannot be replaced at all, not even with the same class. **Tightly coupled** usually happens when the dependency is a constant (`let`) and cannot be set.
+- **Coupled**: In **coupled**, the dependency relies on a particular class, meaning we can change the dependency with an object from the same class or one of its subclasses (unless it is marked as `final`. Although it still considered a coupled relationship, it is much better than tightly coupled. Usually, this can be done by marking the dependency a public variable or adding a constructor to set the dependency upon initializing. 
+- **Loosely Coupled**: The class is not dependent on a specific class but rather a protocol. Loosely coupled expands the spectrum possibilities even further by letting you connect objects without constraining them to their implementation. Loosely coupled is the level when you can easily create mocks/stubs and connect them during testing. You can also combine different objects with different implementation un runtime.
+- **Decoupled**: The relationship between objects is not based on a class type or even a protocol. It does not mean there are no dependencies at all - we do have dependencies but they can communicate through closure or a notification. When this is done, not only can you reuse your classes across your project, chances are you can also do it between other projects (sometimes with minor changes).
 # The Benefit of Encapsulation
 
 The most important benefit from using classes or structs as templates for data objects is the support for `encapsulation`. Encapsulation is one of the core ideas behind object-oriented programming, and there are two aspects of this idea that have a bearing on this chapter.
