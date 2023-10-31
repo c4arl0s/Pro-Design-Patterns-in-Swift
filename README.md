@@ -6,7 +6,7 @@
 2. [x] [2. Getting Used to Xcode](https://github.com/c4arl0s/pro-design-patterns-in-swift#2-Getting-Used-to-Xcode)
 3. [x] [3. Creating the SportsStore App](https://github.com/c4arl0s/pro-design-patterns-in-swift#3-Creating-the-SportsStore-App)
 4. [x] [4. The Object Template Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#4-The-Object-Template-Pattern)
-5. [ ] [5. The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#5-The-Prototype-Pattern)
+5. [x] [5. The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#5-The-Prototype-Pattern)
 6. [ ] [6. The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#6-The-Singleton-Pattern)
 7. [ ] [7. The Object Pool Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#7-The-Object-Pool-Pattern)
 8. [ ] [8. Object Pool Variations](https://github.com/c4arl0s/pro-design-patterns-in-swift#8-Object-Pool-Variations)
@@ -514,6 +514,78 @@ You can see the effect of the additional total I calculate by starting the appli
 <img width="514" alt="Screenshot 2023-10-22 at 7 58 55 p m" src="https://github.com/c4arl0s/Pro-Design-Patterns-in-Swift/assets/24994818/17d6e0a8-afa0-4937-9738-159d125ef65f">
 
 # 5. [The Prototype Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
+
+In this chapter I describe the `prototype pattern`, in which you create new objects by copying an existing object, known as the `prototype`. `The prototype` itself is created using a template, as described in Chapter 4, but subsequent instances are clones. Table 5-1 puts the prototype pattern in context.
+
+| Question                                                         | Answer                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+|------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| What is it?                                                      | The prototype pattern creates new objects by copying an existing object, known as the prototype.                                                                                                                                                                                                                                                                                                                                                            |
+| What are the benefits?                                           | The main benefit is to hide the code that creates objects from the components that use them; this means that components don’t need to know which class or struct is required to create a new object, don’t need to know the details of initializers, and don’t need to change when subclasses are created and instantiated. This pattern can also be used to avoid repeating expensive initialization each time a new object of a specific type is created. |
+| When should you use this pattern?                                | This pattern is useful when you are writing a component that needs to create new instances of objects without creating a dependency on the class initializer.                                                                                                                                                                                                                                                                                               |
+| When should you avoid this pattern?                              | There are no drawbacks to using this pattern, but you should understand the other patterns in this part of the book to ensure that you pick the most suitable for your application.                                                                                                                                                                                                                                                                         |
+| How do you know when you have implemented the pattern correctly? | To test for an effective implementation of this pattern, change the initializer for the class or struct used for the prototype object and check to see whether a corresponding change is required in the component that creates clones. As a second test, create a subclass of the prototype’s class and ensure that the component can clone it without requiring any changes. See the “Implementing the Prototype Pattern” section.                        |
+| Are there any common pitfalls?                                   | The main pitfall is selecting the wrong style of copying when cloning the prototype object. There are two kinds of copying available—shallow and deep—and it is important to select the correct kind for your application. See the “Understanding Shallow and Deep Copying” section for details.                                                                                                                                                            |
+| Are there any related patterns?                                  | The most closely related pattern is the object template pattern, which I describe in Chapter 4. Also see the singleton pattern, which provides a means by which a single object can be shared to avoid needing to create additional instances.                                                                                                                                                                                                              |
+# Understanding the Problem Addressed by the Pattern
+
+In Chapter 4, I explained how to use templates to create objects, but this is an approach that has its own drawbacks, as I describe in the sections that follow.
+
+# Incurring Expensive Initializations
+
+Some class or struct templates are expensive to use, meaning that initializing a new instance of an object can consume a substantial amount of memory or computation in order to prepare the object for use. To demonstrate this kind of problem, I created the `Initialization.playground` file, the contents of which are shown in Listing 5-1.
+
+```swift
+import UIKit
+
+class Sum {
+    var resultsCache: [[Int]] // The bood saids is a let, 
+    var firstValue: Int
+    var secondValue: Int
+    
+    init(first:Int, second:Int) {
+        // resultsCache was updated to use Swift 5.x
+        resultsCache = [[Int]](repeating: [Int](repeating: 0, count: 10), count: 10)
+        for indexI in 0..<10 {
+            for indexJ in 0..<10 {
+                resultsCache[indexI][indexJ] = indexI + indexJ
+            }
+        }
+        self.firstValue = first
+        self.secondValue = second
+    }
+    
+    var Result: Int {
+        get {
+            return firstValue < resultsCache.count && secondValue < resultsCache[firstValue].count ? resultsCache[firstValue][secondValue] : firstValue + secondValue
+        }
+    }
+}
+
+var firstCalculation = Sum(first: 0, second: 9).Result
+var secondCalculation = Sum(first: 3, second: 8).Result
+
+print("first calculation: \(firstCalculation) Second calculation: \(secondCalculation)")
+```
+
+Console output:
+
+```console
+first calculation: 9 Second calculation: 11
+```
+
+I have defined a `class` called `Sum` that produces the sum of two integer values passed to its initializer. As an optimization, the initializer for the `Sum` class creates a two-dimensional `Int` array and populates it with precalculated values with the intention of trading time spent during initialization against faster calculations later.
+
+Having defined the `Sum` class, I then create two instances and use them to perform calculations. Each time that I create a new `Sum` object, I incur the cost of creating and populating the two-dimensional array—a cost that can be measured both in terms of memory required to store the calculated values and in computation. I finish by writing the results of the two calculations to the console, producing the following output:
+
+```console
+first calculation: 9 Second calculation: 11
+```
+
+This may seem like an unrealistic example, but this style of coding is surprisingly common and is usually a result of premature optimization, where a programmer tries to speculatively improve the performance of code as it is being written, rather than as a result of subsequent performance testing—something that usually results in worse performance and less readable code. There are, however, two aspects of this example that are unrealistic. 
+
+1. The first is that the work performed by the `Sum` class is so simple that even the most enthusiastic optimizer is unlikely to see the cost of adding two integers as being worth caching. 
+2. The second aspect is that the playground shows the `Sum` class and the two statements that create instances from it in the same file. In a real project, the initialization code is lost in a deep hierarchy of classes, and the statements that use the class will be in entirely different parts of the app.
+
 # 6. [The Singleton Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 7. [The Object Pool Pattern](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
 # 8. [Object Pool Variations](https://github.com/c4arl0s/pro-design-patterns-in-swift#pro-design-patterns-in-swift---content)
