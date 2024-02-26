@@ -1,0 +1,9 @@
+[submodule "1.-Understanding-Design-Patterns"]
+	path = 1.-Understanding-Design-Patterns
+	url = git@github.com:c4arl0s/1.-Understanding-Design-Patterns.git
+[submodule "3.-Creating-the-SportsStore-App"]
+	path = 3.-Creating-the-SportsStore-App
+	url = git@github.com:c4arl0s/3.-Creating-the-SportsStore-App.git
+[submodule "4.-The-Object-Template-Pattern"]
+	path = 4.-The-Object-Template-Pattern
+	url = git@github.com:c4arl0s/4.-The-Object-Template-Pattern.git
